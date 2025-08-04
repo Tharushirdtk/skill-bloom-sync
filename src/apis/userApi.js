@@ -1,90 +1,74 @@
-import { supabase } from '../lib/supabase';
+import axios from 'axios';
 
-// Auth API endpoints using Supabase
+// Base API configuration
+const API_BASE_URL = 'http://localhost:5000/api';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor to add auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Auth API endpoints
 export const authAPI = {
-  login: async (credentials) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: credentials.email,
-      password: credentials.password,
-    });
-    
-    if (error) {
-      throw { response: { data: { message: error.message } } };
-    }
-    
-    return {
-      data: {
-        token: data.session.access_token,
-        user: {
-          id: data.user.id,
-          email: data.user.email,
-          firstName: data.user.user_metadata.firstName || '',
-          lastName: data.user.user_metadata.lastName || '',
-          role: data.user.user_metadata.role || 'employee'
-        }
-      }
-    };
-  },
-  
-  register: async (userData) => {
-    const { data, error } = await supabase.auth.signUp({
-      email: userData.email,
-      password: userData.password,
-      options: {
-        data: {
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          companyName: userData.companyName,
-          role: userData.role
-        }
-      }
-    });
-    
-    if (error) {
-      throw { response: { data: { message: error.message } } };
-    }
-    
-    return {
-      data: {
-        token: data.session?.access_token || '',
-        user: {
-          id: data.user.id,
-          email: data.user.email,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          role: userData.role
-        }
-      }
-    };
-  },
-  
-  logout: async () => {
-    await supabase.auth.signOut();
+  login: (credentials) => api.post('/auth/login', credentials),
+  register: (userData) => api.post('/auth/register', userData),
+  logout: () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
   }
 };
 
-// Company API endpoints using Supabase
+// Company API endpoints
 export const companyAPI = {
-  getAll: () => supabase.from('companies').select('*'),
-  update: (id, data) => supabase.from('companies').update(data).eq('id', id),
-  delete: (id) => supabase.from('companies').delete().eq('id', id)
+  getAll: () => api.get('/companies'),
+  update: (id, data) => api.put(`/companies/${id}`, data),
+  delete: (id) => api.delete(`/companies/${id}`)
 };
 
-// Employee API endpoints using Supabase
+// Employee API endpoints
 export const employeeAPI = {
-  getAll: () => supabase.from('employees').select('*'),
-  getById: (id) => supabase.from('employees').select('*').eq('id', id).single(),
-  create: (data) => supabase.from('employees').insert(data),
-  update: (id, data) => supabase.from('employees').update(data).eq('id', id),
-  delete: (id) => supabase.from('employees').delete().eq('id', id)
+  getAll: () => api.get('/employees'),
+  getById: (id) => api.get(`/employees/${id}`),
+  create: (data) => api.post('/employees', data),
+  update: (id, data) => api.put(`/employees/${id}`, data),
+  delete: (id) => api.delete(`/employees/${id}`)
 };
 
-// Skills API endpoints using Supabase
+// Skills API endpoints
 export const skillsAPI = {
-  getAll: () => supabase.from('skills').select('*'),
-  create: (data) => supabase.from('skills').insert(data),
-  update: (id, data) => supabase.from('skills').update(data).eq('id', id),
-  delete: (id) => supabase.from('skills').delete().eq('id', id)
+  getAll: () => api.get('/skills'),
+  create: (data) => api.post('/skills', data),
+  update: (id, data) => api.put(`/skills/${id}`, data),
+  delete: (id) => api.delete(`/skills/${id}`)
 };
+
+export default api;
