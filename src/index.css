@@ -8,51 +8,65 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
+    /* SkillSync Dark Purple Theme */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 224 47% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 224 47% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 224 47% 12%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Dark Purple */
+    --primary: 262 47% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 262 47% 55%;
+    --primary-light: 262 60% 75%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Light Purple */
+    --secondary: 262 30% 95%;
+    --secondary-foreground: 262 47% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted - Subtle Purple Tint */
+    --muted: 262 15% 96%;
+    --muted-foreground: 262 8% 46%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - Medium Purple */
+    --accent: 262 40% 85%;
+    --accent-foreground: 262 47% 25%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 262 20% 91%;
+    --input: 262 20% 96%;
+    --ring: 262 47% 45%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(262 47% 45%), hsl(262 47% 55%));
+    --gradient-subtle: linear-gradient(180deg, hsl(262 15% 98%), hsl(262 15% 96%));
+    
+    /* Shadows */
+    --shadow-purple: 0 10px 30px -10px hsl(262 47% 45% / 0.2);
+    --shadow-elegant: 0 4px 20px -4px hsl(262 47% 45% / 0.15);
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* SkillSync specific colors */
+    --skill-beginner: 40 100% 65%;
+    --skill-intermediate: 45 93% 58%;
+    --skill-advanced: 120 61% 50%;
+    --skill-expert: 262 47% 45%;
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 262 15% 98%;
+    --sidebar-foreground: 262 20% 30%;
+    --sidebar-primary: 262 47% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 262 30% 95%;
+    --sidebar-accent-foreground: 262 47% 25%;
+    --sidebar-border: 262 20% 91%;
+    --sidebar-ring: 262 47% 45%;
   }
 
   .dark {
