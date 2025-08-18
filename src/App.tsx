@@ -9,7 +9,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { UserProvider } from './context/UserContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
-// Import pages
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -20,7 +19,6 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Create MUI theme with purple colors
 const theme = createTheme({
   palette: {
     primary: {
@@ -131,6 +129,7 @@ const App = () => (
         </TooltipProvider>
       </UserProvider>
     </ThemeProvider>
+  
   </QueryClientProvider>
 );
 

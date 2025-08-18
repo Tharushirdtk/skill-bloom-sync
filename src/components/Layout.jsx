@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   AppBar,
   Toolbar,
@@ -14,36 +14,36 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  ListItemButton,
   useTheme,
-  useMediaQuery
-} from '@mui/material';
+  useMediaQuery,
+} from "@mui/material";
 import {
   Dashboard,
   People,
   Person,
   Build,
   Logout,
-  Menu as MenuIcon
-} from '@mui/icons-material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useUser } from '../context/UserContext';
-import { useState } from 'react';
+  Menu as MenuIcon,
+} from "@mui/icons-material";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useUser } from "../context/UserContext";
+import { useState } from "react";
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useUser();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const menuItems = [
-    { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
-    { text: 'Employee Directory', icon: <People />, path: '/employees' },
-    { text: 'Profile', icon: <Person />, path: '/profile' },
-    { text: 'Skill Management', icon: <Build />, path: '/skills' }
+    { text: "Dashboard", icon: <Dashboard />, path: "/dashboard" },
+    { text: "Employee Directory", icon: <People />, path: "/employees" },
+    { text: "Skill Management", icon: <Build />, path: "/skills" },
   ];
 
   const handleProfileMenuOpen = (event) => {
@@ -56,7 +56,7 @@ const Layout = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
     handleMenuClose();
   };
 
@@ -66,42 +66,56 @@ const Layout = ({ children }) => {
 
   const drawer = (
     <Box>
-      <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-        <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-          SkillSync
+      <Box sx={{ p: 2, borderBottom: 1, borderColor: "divider" }}>
+        <Typography
+          variant="h6"
+          sx={{ color: "primary.main", fontWeight: "bold" }}
+        >
+          Admin
         </Typography>
       </Box>
       <List>
         {menuItems.map((item) => (
-          <ListItem
-            button
-            key={item.text}
-            onClick={() => {
-              navigate(item.path);
-              if (isMobile) setMobileOpen(false);
-            }}
-            sx={{
-              backgroundColor: location.pathname === item.path ? 'primary.light' : 'transparent',
-              '&:hover': {
-                backgroundColor: 'primary.light',
-              },
-              borderRadius: 1,
-              mx: 1,
-              my: 0.5
-            }}
-          >
-            <ListItemIcon sx={{ color: location.pathname === item.path ? 'primary.main' : 'inherit' }}>
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText 
-              primary={item.text} 
-              sx={{ 
-                color: location.pathname === item.path ? 'primary.main' : 'inherit',
-                '& .MuiListItemText-primary': {
-                  fontWeight: location.pathname === item.path ? 600 : 400
-                }
+          <ListItem key={item.text} sx={{ p: 0, mx: 1, my: 0.5 }}>
+            <ListItemButton
+              onClick={() => {
+                navigate(item.path);
+                if (isMobile) setMobileOpen(false);
               }}
-            />
+              sx={{
+                backgroundColor:
+                  location.pathname === item.path
+                    ? "primary.light"
+                    : "transparent",
+                "&:hover": { backgroundColor: "primary.light" },
+                borderRadius: 1,
+                px: 2,
+                py: 1,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  color:
+                    location.pathname === item.path
+                      ? "primary.main"
+                      : "inherit",
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={item.text}
+                sx={{
+                  color:
+                    location.pathname === item.path
+                      ? "primary.main"
+                      : "inherit",
+                  "& .MuiListItemText-primary": {
+                    fontWeight: location.pathname === item.path ? 600 : 400,
+                  },
+                }}
+              />
+            </ListItemButton>
           </ListItem>
         ))}
       </List>
@@ -109,13 +123,14 @@ const Layout = ({ children }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar 
-        position="fixed" 
-        sx={{ 
+    <Box sx={{ display: "flex" }}>
+      <AppBar
+        position="fixed"
+        sx={{
           zIndex: theme.zIndex.drawer + 1,
-          background: 'linear-gradient(135deg, hsl(262 47% 45%), hsl(262 47% 55%))',
-          boxShadow: '0 4px 20px -4px hsl(262 47% 45% / 0.15)'
+          background:
+            "linear-gradient(135deg, hsl(262 47% 45%), hsl(262 47% 55%))",
+          boxShadow: "0 4px 20px -4px hsl(262 47% 45% / 0.15)",
         }}
       >
         <Toolbar>
@@ -130,41 +145,42 @@ const Layout = ({ children }) => {
               <MenuIcon />
             </IconButton>
           )}
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-            {!isMobile && 'SkillSync'}
+          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: "bold" }}>
+            {!isMobile && "SkillSmart"}
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Typography
+              variant="body2"
+              sx={{ display: { xs: "none", sm: "block" } }}
+            >
               {user?.firstName} {user?.lastName}
             </Typography>
             <IconButton onClick={handleProfileMenuOpen}>
-              <Avatar sx={{ bgcolor: 'primary.light', color: 'primary.main' }}>
-                {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+              <Avatar sx={{ bgcolor: "primary.light", color: "primary.main" }}>
+                {user?.firstName?.charAt(0)}
+                {user?.lastName?.charAt(0)}
               </Avatar>
             </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
 
-      <Box
-        component="nav"
-        sx={{ width: { md: 240 }, flexShrink: { md: 0 } }}
-      >
+      <Box component="nav" sx={{ width: { md: 240 }, flexShrink: { md: 0 } }}>
         <Drawer
-          variant={isMobile ? 'temporary' : 'permanent'}
+          variant={isMobile ? "temporary" : "permanent"}
           open={isMobile ? mobileOpen : true}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile
+            keepMounted: true,
           }}
           sx={{
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
               width: 240,
               mt: { md: 8 },
-              height: { md: 'calc(100% - 64px)' },
-              borderRight: '1px solid hsl(262 20% 91%)',
-              backgroundColor: 'hsl(262 15% 98%)'
+              height: { md: "calc(100% - 64px)" },
+              borderRight: "1px solid hsl(262 20% 80%)",
+              backgroundColor: "hsl(262, 35%, 88%)",
             },
           }}
         >
@@ -179,8 +195,8 @@ const Layout = ({ children }) => {
           p: 3,
           width: { md: `calc(100% - 240px)` },
           mt: 8,
-          backgroundColor: 'hsl(262 15% 99%)',
-          minHeight: '100vh'
+          backgroundColor: "hsl(262 15% 99%)",
+          minHeight: "100vh",
         }}
       >
         {children}
@@ -194,14 +210,10 @@ const Layout = ({ children }) => {
           sx: {
             mt: 1,
             borderRadius: 2,
-            boxShadow: '0 10px 30px -10px hsl(262 47% 45% / 0.2)'
-          }
+            boxShadow: "0 10px 30px -10px hsl(262 47% 45% / 0.2)",
+          },
         }}
       >
-        <MenuItem onClick={() => { navigate('/profile'); handleMenuClose(); }}>
-          <Person sx={{ mr: 1 }} />
-          Profile
-        </MenuItem>
         <MenuItem onClick={handleLogout}>
           <Logout sx={{ mr: 1 }} />
           Logout

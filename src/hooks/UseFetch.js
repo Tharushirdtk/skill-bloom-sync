@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 const useFetch = (apiFunction, dependencies = []) => {
   const [data, setData] = useState(null);
@@ -9,10 +9,19 @@ const useFetch = (apiFunction, dependencies = []) => {
     try {
       setLoading(true);
       setError(null);
+
       const response = await apiFunction();
-      setData(response.data);
+
+      const payload =
+        response && typeof response === "object" && response.data !== undefined
+          ? response.data
+          : response;
+
+      setData(payload);
+      console.log("Data fetched successfully:", payload);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'An error occurred');
+      console.error("Error fetching data:", err);
+      setError(err.response?.data?.message || err.message || "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -30,7 +39,7 @@ const useFetch = (apiFunction, dependencies = []) => {
     data,
     loading,
     error,
-    refetch
+    refetch,
   };
 };
 

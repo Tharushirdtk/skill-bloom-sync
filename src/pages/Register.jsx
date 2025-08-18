@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -14,59 +14,83 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel
-} from '@mui/material';
-import { Formik, Form } from 'formik';
-import { registerValidationSchema } from '../shared/validation/employeeValidation';
-import { useUser } from '../context/UserContext';
-import { useNavigate } from 'react-router-dom';
+  InputLabel,
+} from "@mui/material";
+import { Formik, Form } from "formik";
+import { registerValidationSchema } from "../shared/validation/employeeValidation";
+import { useUser } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const { register, loading, error, clearError } = useUser();
+  const { register, loading, error, clearError, isAuthenticated } = useUser();
   const navigate = useNavigate();
+  const [role, setRole] = useState(null);
+
+  // Redirect after register based on role
+  useEffect(() => {
+    if (!loading && isAuthenticated && role) {
+      if (role === "admin") navigate("/dashboard");
+      if (role === "employee") navigate("/profile");
+    }
+  }, [loading, isAuthenticated, role, navigate]);
 
   const handleSubmit = async (values) => {
     clearError();
-    const result = await register(values);
-    if (result.success) {
-      navigate('/dashboard');
+    const fullName = `${values.firstName.trim()} ${values.lastName.trim()}`;
+    const payload = {
+      name: fullName,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.confirmPassword,
+      companyName: values.companyName,
+      role: values.role,
+    };
+
+    const result = await register(payload);
+    if (result.success && result.user) {
+      setRole(result.user.role);
     }
   };
 
   return (
-    <Box 
-      sx={{ 
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, hsl(262 47% 45% / 0.05), hsl(262 47% 55% / 0.1))',
-        display: 'flex',
-        alignItems: 'center',
-        py: 4
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(135deg, hsl(262 47% 45% / 0.05), hsl(262 47% 55% / 0.1))",
+        display: "flex",
+        alignItems: "center",
+        py: 4,
       }}
     >
       <Container maxWidth="md">
-        <Card 
-          sx={{ 
+        <Card
+          sx={{
             borderRadius: 4,
-            boxShadow: '0 10px 30px -10px hsl(262 47% 45% / 0.2)',
-            border: '1px solid hsl(262 20% 91%)'
+            boxShadow: "0 10px 30px -10px hsl(262 47% 45% / 0.2)",
+            border: "1px solid hsl(262 20% 91%)",
           }}
         >
           <CardContent sx={{ p: 4 }}>
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
-              <Typography 
-                variant="h3" 
-                sx={{ 
-                  fontWeight: 'bold',
-                  background: 'linear-gradient(135deg, hsl(262 47% 45%), hsl(262 47% 55%))',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  mb: 1
+            <Box sx={{ textAlign: "center", mb: 4 }}>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: "bold",
+                  background:
+                    "linear-gradient(135deg, hsl(262 47% 45%), hsl(262 47% 55%))",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  mb: 1,
                 }}
               >
-                SkillSync
+                SkillSmart
               </Typography>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 1 }}>
-                Create Your Account
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}
+              >
+                Create Account (Admin use only)
               </Typography>
               <Typography variant="body1" color="text.secondary">
                 Set up your organization's skill management system
@@ -81,20 +105,28 @@ const Register = () => {
 
             <Formik
               initialValues={{
-                firstName: '',
-                lastName: '',
-                email: '',
-                password: '',
-                confirmPassword: '',
-                companyName: '',
-                role: 'admin'
+                firstName: "",
+                lastName: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
+                companyName: "",
+                role: "admin",
               }}
               validationSchema={registerValidationSchema}
               onSubmit={handleSubmit}
             >
-              {({ values, errors, touched, handleChange, handleBlur, isSubmitting }) => (
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                isSubmitting,
+              }) => (
                 <Form>
                   <Grid container spacing={3}>
+                    {/* First Name */}
                     <Grid item xs={12} sm={6}>
                       <TextField
                         fullWidth
@@ -105,19 +137,10 @@ const Register = () => {
                         onBlur={handleBlur}
                         error={touched.firstName && Boolean(errors.firstName)}
                         helperText={touched.firstName && errors.firstName}
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            '&:hover fieldset': {
-                              borderColor: 'primary.main'
-                            },
-                            '&.Mui-focused fieldset': {
-                              borderColor: 'primary.main'
-                            }
-                          }
-                        }}
                       />
                     </Grid>
 
+                    {/* Last Name */}
                     <Grid item xs={12} sm={6}>
                       <TextField
                         fullWidth
@@ -128,19 +151,10 @@ const Register = () => {
                         onBlur={handleBlur}
                         error={touched.lastName && Boolean(errors.lastName)}
                         helperText={touched.lastName && errors.lastName}
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            '&:hover fieldset': {
-                              borderColor: 'primary.main'
-                            },
-                            '&.Mui-focused fieldset': {
-                              borderColor: 'primary.main'
-                            }
-                          }
-                        }}
                       />
                     </Grid>
 
+                    {/* Email */}
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
@@ -152,19 +166,10 @@ const Register = () => {
                         onBlur={handleBlur}
                         error={touched.email && Boolean(errors.email)}
                         helperText={touched.email && errors.email}
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            '&:hover fieldset': {
-                              borderColor: 'primary.main'
-                            },
-                            '&.Mui-focused fieldset': {
-                              borderColor: 'primary.main'
-                            }
-                          }
-                        }}
                       />
                     </Grid>
 
+                    {/* Company Name */}
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
@@ -173,21 +178,14 @@ const Register = () => {
                         value={values.companyName}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={touched.companyName && Boolean(errors.companyName)}
+                        error={
+                          touched.companyName && Boolean(errors.companyName)
+                        }
                         helperText={touched.companyName && errors.companyName}
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            '&:hover fieldset': {
-                              borderColor: 'primary.main'
-                            },
-                            '&.Mui-focused fieldset': {
-                              borderColor: 'primary.main'
-                            }
-                          }
-                        }}
                       />
                     </Grid>
 
+                    {/* Password */}
                     <Grid item xs={12} sm={6}>
                       <TextField
                         fullWidth
@@ -199,19 +197,10 @@ const Register = () => {
                         onBlur={handleBlur}
                         error={touched.password && Boolean(errors.password)}
                         helperText={touched.password && errors.password}
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            '&:hover fieldset': {
-                              borderColor: 'primary.main'
-                            },
-                            '&.Mui-focused fieldset': {
-                              borderColor: 'primary.main'
-                            }
-                          }
-                        }}
                       />
                     </Grid>
 
+                    {/* Confirm Password */}
                     <Grid item xs={12} sm={6}>
                       <TextField
                         fullWidth
@@ -221,22 +210,18 @@ const Register = () => {
                         value={values.confirmPassword}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={touched.confirmPassword && Boolean(errors.confirmPassword)}
-                        helperText={touched.confirmPassword && errors.confirmPassword}
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            '&:hover fieldset': {
-                              borderColor: 'primary.main'
-                            },
-                            '&.Mui-focused fieldset': {
-                              borderColor: 'primary.main'
-                            }
-                          }
-                        }}
+                        error={
+                          touched.confirmPassword &&
+                          Boolean(errors.confirmPassword)
+                        }
+                        helperText={
+                          touched.confirmPassword && errors.confirmPassword
+                        }
                       />
                     </Grid>
 
-                    <Grid item xs={12}>
+                    {/* Role */}
+                    {/* <Grid item xs={12}>
                       <FormControl fullWidth>
                         <InputLabel>Role</InputLabel>
                         <Select
@@ -251,8 +236,9 @@ const Register = () => {
                           <MenuItem value="employee">Employee</MenuItem>
                         </Select>
                       </FormControl>
-                    </Grid>
+                    </Grid> */}
 
+                    {/* Submit Button */}
                     <Grid item xs={12}>
                       <Button
                         type="submit"
@@ -261,22 +247,21 @@ const Register = () => {
                         size="large"
                         disabled={isSubmitting || loading}
                         sx={{
-                          background: 'linear-gradient(135deg, hsl(262 47% 45%), hsl(262 47% 55%))',
+                          background:
+                            "linear-gradient(135deg, hsl(262 47% 45%), hsl(262 47% 55%))",
                           py: 1.5,
-                          fontSize: '1.1rem',
-                          fontWeight: 'bold',
-                          '&:hover': {
-                            background: 'linear-gradient(135deg, hsl(262 47% 40%), hsl(262 47% 50%))'
+                          fontSize: "1.1rem",
+                          fontWeight: "bold",
+                          "&:hover": {
+                            background:
+                              "linear-gradient(135deg, hsl(262 47% 40%), hsl(262 47% 50%))",
                           },
-                          '&:disabled': {
-                            background: 'hsl(262 20% 80%)'
-                          }
                         }}
                       >
                         {isSubmitting || loading ? (
                           <CircularProgress size={24} color="inherit" />
                         ) : (
-                          'Create Account'
+                          "Create Account"
                         )}
                       </Button>
                     </Grid>
@@ -285,20 +270,17 @@ const Register = () => {
               )}
             </Formik>
 
-            <Box sx={{ textAlign: 'center', mt: 3 }}>
+            <Box sx={{ textAlign: "center", mt: 3 }}>
               <Typography variant="body2" color="text.secondary">
-                Already have an account?{' '}
+                Already have an account?{" "}
                 <Link
                   component="button"
                   variant="body2"
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate("/login")}
                   sx={{
-                    color: 'primary.main',
-                    textDecoration: 'none',
-                    fontWeight: 'bold',
-                    '&:hover': {
-                      textDecoration: 'underline'
-                    }
+                    color: "primary.main",
+                    fontWeight: "bold",
+                    "&:hover": { textDecoration: "underline" },
                   }}
                 >
                   Sign in here

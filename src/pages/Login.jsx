@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -8,173 +8,133 @@ import {
   Typography,
   Link,
   Alert,
-  CircularProgress,
-  Container
-} from '@mui/material';
-import { Formik, Form } from 'formik';
-import { loginValidationSchema } from '../shared/validation/employeeValidation';
-import { useUser } from '../context/UserContext';
-import { useNavigate } from 'react-router-dom';
+  Container,
+} from "@mui/material";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
+import { useUser } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
-  const { login, loading, error, clearError } = useUser();
+export default function Login() {
+  const { login, error, clearError, isAuthenticated } = useUser();
   const navigate = useNavigate();
-  const [showRegister, setShowRegister] = useState(false);
+  const [role, setRole] = useState(null);
 
-  const handleSubmit = async (values) => {
-    clearError();
+  // Redirect based on role
+  useEffect(() => {
+    if (isAuthenticated && role) {
+      if (role === "admin") navigate("/dashboard");
+      if (role === "employee") navigate("/profile");
+    }
+  }, [isAuthenticated, role, navigate]);
+
+  const schema = Yup.object({
+    email: Yup.string().email("Invalid email").required("Required"),
+    password: Yup.string().min(4, "Min 4 chars").required("Required"),
+  });
+
+  const handleSubmit = async (values, { setSubmitting }) => {
     const result = await login(values);
-    if (result.success) {
-      navigate('/dashboard');
+    setSubmitting(false); // re-enable button immediately after response
+    if (result.success && result.user) {
+      setRole(result.user.role);
     }
   };
 
   return (
-    <Box 
-      sx={{ 
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, hsl(262 47% 45% / 0.05), hsl(262 47% 55% / 0.1))',
-        display: 'flex',
-        alignItems: 'center',
-        py: 4
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(135deg, rgba(138,43,226,0.05), rgba(138,43,226,0.1))",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        p: 2,
       }}
     >
-      <Container maxWidth="sm">
-        <Card 
-          sx={{ 
-            borderRadius: 4,
-            boxShadow: '0 10px 30px -10px hsl(262 47% 45% / 0.2)',
-            border: '1px solid hsl(262 20% 91%)'
-          }}
-        >
-          <CardContent sx={{ p: 4 }}>
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
-              <Typography 
-                variant="h3" 
-                sx={{ 
-                  fontWeight: 'bold',
-                  background: 'linear-gradient(135deg, hsl(262 47% 45%), hsl(262 47% 55%))',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  mb: 1
-                }}
-              >
-                SkillSync
-              </Typography>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 1 }}>
-                Welcome Back
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Sign in to manage your skills and team
-              </Typography>
-            </Box>
+      <Container maxWidth="xs">
+        <Card sx={{ borderRadius: 4, boxShadow: 3 }}>
+          <CardContent>
+            <Typography variant="h4" align="center" gutterBottom>
+              SkillSmart
+            </Typography>
 
             {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
+              <Alert severity="error" sx={{ mb: 2 }}>
                 {error}
               </Alert>
             )}
 
             <Formik
-              initialValues={{
-                email: '',
-                password: ''
-              }}
-              validationSchema={loginValidationSchema}
+              initialValues={{ email: "", password: "" }}
+              validationSchema={schema}
               onSubmit={handleSubmit}
             >
-              {({ values, errors, touched, handleChange, handleBlur, isSubmitting }) => (
-                <Form>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                    <TextField
-                      fullWidth
-                      name="email"
-                      label="Email Address"
-                      type="email"
-                      value={values.email}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.email && Boolean(errors.email)}
-                      helperText={touched.email && errors.email}
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: 'primary.main'
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: 'primary.main'
-                          }
-                        }
-                      }}
-                    />
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                isSubmitting,
+              }) => (
+                <Form noValidate>
+                  <TextField
+                    fullWidth
+                    margin="normal"
+                    name="email"
+                    label="Email"
+                    type="email"
+                    value={values.email}
+                    onChange={handleChange}
+                    onBlur={(e) => {
+                      handleBlur(e);
+                      clearError();
+                    }}
+                    error={touched.email && Boolean(errors.email)}
+                    helperText={touched.email && errors.email}
+                  />
 
-                    <TextField
-                      fullWidth
-                      name="password"
-                      label="Password"
-                      type="password"
-                      value={values.password}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.password && Boolean(errors.password)}
-                      helperText={touched.password && errors.password}
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: 'primary.main'
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: 'primary.main'
-                          }
-                        }
-                      }}
-                    />
+                  <TextField
+                    fullWidth
+                    margin="normal"
+                    name="password"
+                    label="Password"
+                    type="password"
+                    value={values.password}
+                    onChange={handleChange}
+                    onBlur={(e) => {
+                      handleBlur(e);
+                      clearError();
+                    }}
+                    error={touched.password && Boolean(errors.password)}
+                    helperText={touched.password && errors.password}
+                  />
 
+                  <Box sx={{ mt: 3 }}>
                     <Button
                       type="submit"
                       fullWidth
                       variant="contained"
-                      size="large"
-                      disabled={isSubmitting || loading}
-                      sx={{
-                        background: 'linear-gradient(135deg, hsl(262 47% 45%), hsl(262 47% 55%))',
-                        py: 1.5,
-                        fontSize: '1.1rem',
-                        fontWeight: 'bold',
-                        '&:hover': {
-                          background: 'linear-gradient(135deg, hsl(262 47% 40%), hsl(262 47% 50%))'
-                        },
-                        '&:disabled': {
-                          background: 'hsl(262 20% 80%)'
-                        }
-                      }}
+                      disabled={isSubmitting} // only disable during submit
+                      sx={{ py: 1.5, fontWeight: "bold" }}
                     >
-                      {isSubmitting || loading ? (
-                        <CircularProgress size={24} color="inherit" />
-                      ) : (
-                        'Sign In'
-                      )}
+                      Sign In
                     </Button>
                   </Box>
                 </Form>
               )}
             </Formik>
 
-            <Box sx={{ textAlign: 'center', mt: 3 }}>
-              <Typography variant="body2" color="text.secondary">
-                Don't have an account?{' '}
+            <Box textAlign="center" mt={2}>
+              <Typography variant="body2">
+                Don’t have an account?{" "}
                 <Link
                   component="button"
                   variant="body2"
-                  onClick={() => navigate('/register')}
-                  sx={{
-                    color: 'primary.main',
-                    textDecoration: 'none',
-                    fontWeight: 'bold',
-                    '&:hover': {
-                      textDecoration: 'underline'
-                    }
-                  }}
+                  onClick={() => navigate("/register")}
+                  sx={{ fontWeight: "bold" }}
                 >
                   Sign up here
                 </Link>
@@ -185,6 +145,4 @@ const Login = () => {
       </Container>
     </Box>
   );
-};
-
-export default Login;
+}
