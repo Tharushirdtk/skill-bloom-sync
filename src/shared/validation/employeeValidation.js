@@ -76,40 +76,35 @@ export const loginValidationSchema = yup.object({
 export const registerValidationSchema = yup.object({
   firstName: yup
     .string()
-    .required('First name is required')
-    .min(2, 'First name must be at least 2 characters'),
-  
+    .required("First name is required")
+    .min(2, "First name must be at least 2 characters"),
+
   lastName: yup
     .string()
-    .required('Last name is required')
-    .min(2, 'Last name must be at least 2 characters'),
-  
+    .required("Last name is required")
+    .min(2, "Last name must be at least 2 characters"),
+
   email: yup
     .string()
-    .email('Invalid email format')
-    .required('Email is required'),
-  
+    .email("Invalid email format")
+    .required("Email is required"),
+
   password: yup
     .string()
-    .required('Password is required')
-    .min(6, 'Password must be at least 6 characters')
+    .required("Password is required")
+    .min(6, "Password must be at least 6 characters")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one lowercase letter, one uppercase letter, and one number'
+      "Password must contain at least one lowercase letter, one uppercase letter, and one number"
     ),
-  
+
   confirmPassword: yup
     .string()
-    .required('Please confirm your password')
-    .oneOf([yup.ref('password')], 'Passwords must match'),
-  
+    .required("Please confirm your password")
+    .oneOf([yup.ref("password")], "Passwords must match"),
+
   companyName: yup
     .string()
-    .required('Company name is required')
-    .min(2, 'Company name must be at least 2 characters'),
-  
-  role: yup
-    .string()
-    .oneOf(['admin', 'employee'], 'Invalid role')
-    .required('Role is required')
+    .required("Company name is required")
+    .min(2, "Company name must be at least 2 characters"),
 });
