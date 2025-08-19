@@ -1,3 +1,4 @@
+// ...existing code...
 // frontend/src/apis/api.js
 import axios from "axios";
 
@@ -55,6 +56,8 @@ export const companyAPI = {
 
 // Employee API endpoints
 export const employeeAPI = {
+  deleteCertificate: (employeeId, certId) =>
+    api.delete(`/employees/${employeeId}/certificates/${certId}`),
   getAll: (companyId) => api.get(`/employees?companyId=${companyId}`),
   getById: (id) => api.get(`/employees/${id}`),
   create: (data) => api.post("/employees", data),
@@ -78,6 +81,14 @@ export const employeeAPI = {
   // Delete an assigned skill
   deleteSkill: (employeeId, skillId) =>
     api.delete(`/employees/${employeeId}/skills/${skillId}`),
+
+  // Certificates
+  addCertificate: (employeeId, certData) =>
+    api.post(`/employees/${employeeId}/certificates`, certData),
+  getCertificateCount: (companyId) =>
+    api.get(`/employees/certificates/count?companyId=${companyId}`),
+  getCertificates: (employeeId) =>
+    api.get(`/employees/${employeeId}/certificates`).then((res) => res.data),
 };
 
 // Skills API endpoints
@@ -94,7 +105,9 @@ export const skillsAPI = {
 
   // Get only skills assigned to employees of a company
   getCompanyAssigned: (companyId) =>
-    api.get(`/skills/company-assigned?companyId=${companyId}`).then((res) => res.data),
+    api
+      .get(`/skills/company-assigned?companyId=${companyId}`)
+      .then((res) => res.data),
 };
 
 // User API endpoints (profile)

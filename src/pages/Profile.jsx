@@ -221,6 +221,8 @@ const Profile = () => {
     [user?.companyId]
   );
   const [assignedSkills, setAssignedSkills] = useState([]);
+  const [certificates, setCertificates] = useState([]);
+  const [showCertDialog, setShowCertDialog] = useState(false);
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
   const [skillDialogInitial, setSkillDialogInitial] = useState(null);
   const [loadingSkills, setLoadingSkills] = useState(false);
@@ -231,6 +233,54 @@ const Profile = () => {
     if (Array.isArray(maybeResp)) return maybeResp;
     if (maybeResp.data !== undefined) return maybeResp.data;
     return maybeResp;
+  };
+
+  // Add certificate handler
+  const handleAddCertificate = async (values, { setSubmitting }) => {
+    setSubmitting(true);
+    try {
+      if (!user?.id) throw new Error("User not loaded");
+      await employeeAPI.addCertificate(user.id, values);
+      // Reload certificates
+      if (employeeAPI.getCertificates) {
+        const certRaw = await employeeAPI.getCertificates(user.id);
+        const certs = unwrapResponse(certRaw) || [];
+        setCertificates(Array.isArray(certs) ? certs : []);
+      }
+      setShowCertDialog(false);
+    } catch (err) {
+      alert(
+        "Failed to add certificate: " +
+          (err.response?.data?.message || err.message)
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Delete certificate handler with confirmation
+  const handleDeleteCertificate = async (idx) => {
+    const cert = certificates[idx];
+    if (!cert) return;
+    if (
+      !window.confirm(
+        `Are you sure you want to delete certificate '${
+          cert.name || cert.skill?.name || ""
+        }'? This action cannot be undone.`
+      )
+    ) {
+      return;
+    }
+    try {
+      await employeeAPI.deleteCertificate(user.id, cert.id);
+      setCertificates((prev) => prev.filter((_, i) => i !== idx));
+      alert("Certificate deleted successfully.");
+    } catch (err) {
+      alert(
+        "Failed to delete certificate: " +
+          (err.response?.data?.message || err.message)
+      );
+    }
   };
 
   useEffect(() => {
@@ -250,9 +300,16 @@ const Profile = () => {
         const assignedRaw = await employeeAPI.getSkills(me.id);
         const assigned = unwrapResponse(assignedRaw) || [];
         setAssignedSkills(Array.isArray(assigned) ? assigned : []);
+
+        // Fetch certificates for this employee
+        const certRaw = (await employeeAPI.getCertificates)
+          ? await employeeAPI.getCertificates(me.id)
+          : [];
+        const certs = unwrapResponse(certRaw) || [];
+        setCertificates(Array.isArray(certs) ? certs : []);
       } catch (err) {
-        console.error("Error fetching profile/skills:", err);
-        alert("Failed to load profile or skills.");
+        console.error("Error fetching profile/skills/certificates:", err);
+        alert("Failed to load profile, skills, or certificates.");
       } finally {
         setLoading(false);
         setLoadingSkills(false);
@@ -270,7 +327,6 @@ const Profile = () => {
   });
 
   const reloadAssignedSkills = async () => {
-    if (!user?.id) return;
     try {
       setLoadingSkills(true);
       const assignedRaw = await employeeAPI.getSkills(user.id);
@@ -552,7 +608,12 @@ const Profile = () => {
               <Box mt={2}>
                 <Stack spacing={2}>
                   <Box display="flex" alignItems="center" gap={2}>
-                    <Typography variant="subtitle1" color="text.secondary" fontWeight={500} minWidth={120}>
+                    <Typography
+                      variant="subtitle1"
+                      color="text.secondary"
+                      fontWeight={500}
+                      minWidth={120}
+                    >
                       Name
                     </Typography>
                     <Typography variant="body1" fontWeight={600}>
@@ -560,7 +621,12 @@ const Profile = () => {
                     </Typography>
                   </Box>
                   <Box display="flex" alignItems="center" gap={2}>
-                    <Typography variant="subtitle1" color="text.secondary" fontWeight={500} minWidth={120}>
+                    <Typography
+                      variant="subtitle1"
+                      color="text.secondary"
+                      fontWeight={500}
+                      minWidth={120}
+                    >
                       Email
                     </Typography>
                     <Typography variant="body1" fontWeight={600}>
@@ -568,7 +634,12 @@ const Profile = () => {
                     </Typography>
                   </Box>
                   <Box display="flex" alignItems="center" gap={2}>
-                    <Typography variant="subtitle1" color="text.secondary" fontWeight={500} minWidth={120}>
+                    <Typography
+                      variant="subtitle1"
+                      color="text.secondary"
+                      fontWeight={500}
+                      minWidth={120}
+                    >
                       Position
                     </Typography>
                     <Typography variant="body1" fontWeight={600}>
@@ -576,7 +647,12 @@ const Profile = () => {
                     </Typography>
                   </Box>
                   <Box display="flex" alignItems="center" gap={2}>
-                    <Typography variant="subtitle1" color="text.secondary" fontWeight={500} minWidth={120}>
+                    <Typography
+                      variant="subtitle1"
+                      color="text.secondary"
+                      fontWeight={500}
+                      minWidth={120}
+                    >
                       Joined Date
                     </Typography>
                     <Typography variant="body1" fontWeight={600}>
@@ -677,6 +753,137 @@ const Profile = () => {
           prefillSkillId={prefillSkillId}
           onSave={handleSaveAssignedSkill}
         />
+
+        {/* Certificates Section */}
+        <Card
+          sx={{
+            borderRadius: 5,
+            boxShadow: 4,
+            px: 3,
+            py: 5,
+            background: "white",
+            width: "100%",
+            mt: 5,
+          }}
+        >
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
+            <Typography variant="h6" fontWeight={700}>
+              Certificates
+            </Typography>
+            <Button
+              variant="contained"
+              size="medium"
+              sx={{
+                background: "linear-gradient(135deg, #7c3aed, #a78bfa)",
+                fontWeight: "bold",
+                boxShadow: "0 2px 8px 0 rgba(124,58,237,0.12)",
+              }}
+              onClick={() => setShowCertDialog(true)}
+            >
+              Add Certificate
+            </Button>
+          </Box>
+          {/* Certificates List */}
+          {certificates && certificates.length > 0 ? (
+            <Grid container spacing={3} mt={1}>
+              {certificates.map((cert, idx) => (
+                <Grid item key={idx} xs={12} sm={6} md={4}>
+                  <Card sx={{ p: 2, borderRadius: 2, boxShadow: 1 }}>
+                    <Typography variant="subtitle1" fontWeight={500}>
+                      {cert.name}
+                    </Typography>
+                    <Typography variant="body2">
+                      Issued By: {cert.issuedBy}
+                    </Typography>
+                    <Typography variant="body2">
+                      Issue Date: {cert.issueDate}
+                    </Typography>
+                    {/* <Typography variant="body2">Expiry Date: {cert.expiryDate}</Typography> */}
+                    <Box mt={2} display="flex" gap={1}>
+                      <Button
+                        size="small"
+                        color="error"
+                        onClick={() => handleDeleteCertificate(idx)}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <Typography color="text.secondary">
+              No certificates added yet.
+            </Typography>
+          )}
+        </Card>
+
+        {/* Certificate Dialog */}
+        <Dialog
+          open={showCertDialog}
+          onClose={() => setShowCertDialog(false)}
+          maxWidth="xs"
+          fullWidth
+        >
+          <DialogTitle>Add Certificate</DialogTitle>
+          <Formik
+            initialValues={{ name: "", issuedBy: "", issueDate: "" }}
+            onSubmit={handleAddCertificate}
+          >
+            {({ values, handleChange, isSubmitting }) => (
+              <Form>
+                <DialogContent
+                  sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                >
+                  <TextField
+                    label="Certificate Name"
+                    name="name"
+                    value={values.name}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                  <TextField
+                    label="Issued By"
+                    name="issuedBy"
+                    value={values.issuedBy}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                  <TextField
+                    label="Issue Date"
+                    name="issueDate"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    value={values.issueDate}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={isSubmitting}
+                  >
+                    Add
+                  </Button>
+                  <Button
+                    onClick={() => setShowCertDialog(false)}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                </DialogActions>
+              </Form>
+            )}
+          </Formik>
+        </Dialog>
       </Box>
     </EmployeeLayout>
   );

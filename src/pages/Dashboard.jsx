@@ -35,6 +35,12 @@ const Dashboard = () => {
     [companyId]
   );
 
+  // Certificates count for dashboard card
+  const { data: certificateCount } = useFetch(
+    () => employeeAPI.getCertificateCount(companyId),
+    [companyId]
+  );
+
   const { data: skillDistribution } = useFetch(
     dashboardAPI.getSkillDistribution
   );
@@ -113,7 +119,7 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <Box>
+      <Box sx={{ maxWidth: 1200, mx: "auto", px: 2 }}>
         <Typography
           variant="h4"
           sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}
@@ -131,64 +137,82 @@ const Dashboard = () => {
           alignItems="stretch"
           sx={{ mb: 4 }}
         >
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            display="flex"
+            justifyContent="center"
+            alignItems="stretch"
+          >
             <StatsCard
               title="Total Employees"
               value={employees?.length || 0}
               icon={<People />}
               color="primary"
-              trend={{ value: 12, positive: true }}
+              trend={null}
             />
           </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            display="flex"
+            justifyContent="center"
+            alignItems="stretch"
+          >
             <StatsCard
               title="Total Skills"
               value={companySkills?.length || 0}
               icon={<Build />}
               color="secondary"
-              trend={{ value: 8, positive: true }}
+              trend={null}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            display="flex"
+            justifyContent="center"
+            alignItems="stretch"
+          >
+            <StatsCard
+              title="Total Certificates"
+              value={certificateCount?.count || 0}
+              icon={<School />}
+              color="info"
+              trend={null}
             />
           </Grid>
         </Grid>
 
-        {/* Skill Category vs Employee Count Chart */}
-        <Box
-          sx={{
-            width: "100%",
-            mx: "auto",
-            mb: 4,
-            display: "flex",
-            justifyContent: "center",
-          }}
+        {/* Charts side by side with more space between */}
+        <Grid
+          container
+          spacing={8}
+          sx={{ mb: 4 }}
+          justifyContent="center"
+          alignItems="flex-start"
         >
-          <Box sx={{ width: "100%" }}>
+          <Grid item xs={12} md={6}>
             <SkillDistributionChart
               data={categoryChartData}
-              type="bar"
+              type="pie"
               title="Employee Count by Skill Category"
             />
-          </Box>
-        </Box>
-
-        {/* Skill Category vs Employee Count Chart */}
-        <Box
-          sx={{
-            width: "100%",
-            mx: "auto",
-            mb: 4,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Box sx={{ width: "100%" }}>
+          </Grid>
+          <Grid item xs={12} md={6}>
             <SkillDistributionChart
               data={skillNameChartData}
               type="horizontalBar"
               title="Employee Count by Skill Name"
             />
-          </Box>
-        </Box>
+          </Grid>
+        </Grid>
       </Box>
     </Layout>
   );

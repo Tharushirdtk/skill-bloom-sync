@@ -17,11 +17,16 @@ import {
 const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
   const [chartData, setChartData] = useState([]);
 
+  // Colors harmonious
   const COLORS = [
-    "hsl(40 100% 65%)", // Beginner
-    "hsl(45 93% 58%)", // Intermediate
-    "hsl(120 61% 50%)", // Advanced
-    "hsl(262 47% 45%)", // Expert
+    "#6EC6FF", // Soft Blue
+    "#81C784", // Soft Green
+    "#FFB74D", // Soft Orange
+    "#FFD54F", // Soft Yellow
+    "#E57373", // Soft Red
+    "#4DD0E1", // Soft Teal
+    "#F06292", // Soft Pink
+    "#A1887F", // Soft Brown
   ];
 
   // Transform incoming data safely
@@ -147,7 +152,7 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
                   </Pie>
                   <Tooltip content={<CustomTooltip />} />
                   <Legend
-                    wrapperStyle={{ paddingTop: "20px", fontSize: "14px" }}
+                    wrapperStyle={{ paddingTop: "30px", fontSize: "16px" }}
                   />
                 </PieChart>
               ) : type === "horizontalBar" ? (
@@ -174,16 +179,19 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
                     fontSize={12}
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar
-                    dataKey="value"
-                    fill="hsl(262 47% 45%)"
-                    radius={[0, 4, 4, 0]}
-                  />
+                  <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                    {chartData.map((entry, index) => (
+                      <Cell
+                        key={`cell-bar-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Bar>
                 </BarChart>
               ) : (
                 <BarChart
                   data={chartData}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -201,11 +209,9 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
                     allowDecimals={false}
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar
-                    dataKey="value"
-                    fill="hsl(262 47% 45%)"
-                    radius={[4, 4, 0, 0]}
-                  />
+                  <Bar dataKey="value" fill="#6EC6FF">
+                    {/* No radius, just normal bars */}
+                  </Bar>
                 </BarChart>
               )}
             </ResponsiveContainer>

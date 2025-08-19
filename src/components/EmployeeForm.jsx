@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -15,65 +15,72 @@ import {
   Box,
   Typography,
   IconButton,
-  Autocomplete
-} from '@mui/material';
-import { Add, Delete } from '@mui/icons-material';
-import { Formik, Form, FieldArray } from 'formik';
-import { employeeValidationSchema } from '../shared/validation/employeeValidation';
+  Autocomplete,
+} from "@mui/material";
+import { Add, Delete } from "@mui/icons-material";
+import { Formik, Form, FieldArray } from "formik";
+import { employeeValidationSchema } from "../shared/validation/employeeValidation";
 
-const EmployeeForm = ({ open, onClose, onSubmit, employee = null, availableSkills = [] }) => {
+const EmployeeForm = ({
+  open,
+  onClose,
+  onSubmit,
+  employee = null,
+  availableSkills = [],
+}) => {
   const initialValues = {
-    firstName: employee?.firstName || '',
-    lastName: employee?.lastName || '',
-    email: employee?.email || '',
-    department: employee?.department || '',
-    position: employee?.position || '',
+    firstName: employee?.firstName || "",
+    lastName: employee?.lastName || "",
+    email: employee?.email || "",
+    department: employee?.department || "",
+    position: employee?.position || "",
     skills: employee?.skills || [
       {
-        skillId: '',
-        proficiencyLevel: 'Beginner',
+        skillId: "",
+        proficiencyLevel: "Beginner",
         yearsOfExperience: 0,
-        certifications: []
-      }
-    ]
+        certifications: [],
+      },
+    ],
+    certificates: employee?.certificates || [],
   };
 
   const departments = [
-    'Engineering',
-    'Marketing',
-    'Sales',
-    'Human Resources',
-    'Finance',
-    'Operations',
-    'Design',
-    'Product Management'
+    "Engineering",
+    "Marketing",
+    "Sales",
+    "Human Resources",
+    "Finance",
+    "Operations",
+    "Design",
+    "Product Management",
   ];
 
-  const proficiencyLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
+  const proficiencyLevels = ["Beginner", "Intermediate", "Advanced", "Expert"];
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={onClose} 
-      maxWidth="md" 
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
       fullWidth
       PaperProps={{
         sx: {
           borderRadius: 3,
-          boxShadow: '0 10px 30px -10px hsl(262 47% 45% / 0.2)'
-        }
+          boxShadow: "0 10px 30px -10px hsl(262 47% 45% / 0.2)",
+        },
       }}
     >
-      <DialogTitle 
-        sx={{ 
-          backgroundColor: 'primary.light',
-          color: 'primary.main',
-          fontWeight: 'bold'
+      <DialogTitle
+        sx={{
+          backgroundColor: "primary.light",
+          color: "primary.main",
+          fontWeight: "bold",
         }}
       >
-        {employee ? 'Edit Employee' : 'Add New Employee'}
+        {employee ? "Edit Employee" : "Add New Employee"}
       </DialogTitle>
-      
+
       <Formik
         initialValues={initialValues}
         validationSchema={employeeValidationSchema}
@@ -82,7 +89,15 @@ const EmployeeForm = ({ open, onClose, onSubmit, employee = null, availableSkill
           setSubmitting(false);
         }}
       >
-        {({ values, errors, touched, handleChange, handleBlur, setFieldValue, isSubmitting }) => (
+        {({
+          values,
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          setFieldValue,
+          isSubmitting,
+        }) => (
           <Form>
             <DialogContent sx={{ p: 3 }}>
               <Grid container spacing={3}>
@@ -97,15 +112,15 @@ const EmployeeForm = ({ open, onClose, onSubmit, employee = null, availableSkill
                     error={touched.firstName && Boolean(errors.firstName)}
                     helperText={touched.firstName && errors.firstName}
                     sx={{
-                      '& .MuiOutlinedInput-root': {
-                        '&:hover fieldset': {
-                          borderColor: 'primary.main'
-                        }
-                      }
+                      "& .MuiOutlinedInput-root": {
+                        "&:hover fieldset": {
+                          borderColor: "primary.main",
+                        },
+                      },
                     }}
                   />
                 </Grid>
-                
+
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
@@ -117,15 +132,15 @@ const EmployeeForm = ({ open, onClose, onSubmit, employee = null, availableSkill
                     error={touched.lastName && Boolean(errors.lastName)}
                     helperText={touched.lastName && errors.lastName}
                     sx={{
-                      '& .MuiOutlinedInput-root': {
-                        '&:hover fieldset': {
-                          borderColor: 'primary.main'
-                        }
-                      }
+                      "& .MuiOutlinedInput-root": {
+                        "&:hover fieldset": {
+                          borderColor: "primary.main",
+                        },
+                      },
                     }}
                   />
                 </Grid>
-                
+
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
@@ -138,15 +153,15 @@ const EmployeeForm = ({ open, onClose, onSubmit, employee = null, availableSkill
                     error={touched.email && Boolean(errors.email)}
                     helperText={touched.email && errors.email}
                     sx={{
-                      '& .MuiOutlinedInput-root': {
-                        '&:hover fieldset': {
-                          borderColor: 'primary.main'
-                        }
-                      }
+                      "& .MuiOutlinedInput-root": {
+                        "&:hover fieldset": {
+                          borderColor: "primary.main",
+                        },
+                      },
                     }}
                   />
                 </Grid>
-                
+
                 <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
                     <InputLabel>Department</InputLabel>
@@ -166,7 +181,7 @@ const EmployeeForm = ({ open, onClose, onSubmit, employee = null, availableSkill
                     </Select>
                   </FormControl>
                 </Grid>
-                
+
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
@@ -178,20 +193,22 @@ const EmployeeForm = ({ open, onClose, onSubmit, employee = null, availableSkill
                     error={touched.position && Boolean(errors.position)}
                     helperText={touched.position && errors.position}
                     sx={{
-                      '& .MuiOutlinedInput-root': {
-                        '&:hover fieldset': {
-                          borderColor: 'primary.main'
-                        }
-                      }
+                      "& .MuiOutlinedInput-root": {
+                        "&:hover fieldset": {
+                          borderColor: "primary.main",
+                        },
+                      },
                     }}
                   />
                 </Grid>
-                
+
                 <Grid item xs={12}>
-                  <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ mb: 2, color: "primary.main" }}
+                  >
                     Skills
                   </Typography>
-                  
                   <FieldArray name="skills">
                     {({ push, remove }) => (
                       <Box>
@@ -201,37 +218,54 @@ const EmployeeForm = ({ open, onClose, onSubmit, employee = null, availableSkill
                             sx={{
                               p: 2,
                               mb: 2,
-                              border: '1px solid hsl(262 20% 91%)',
+                              border: "1px solid hsl(262 20% 91%)",
                               borderRadius: 2,
-                              backgroundColor: 'hsl(262 15% 98%)'
+                              backgroundColor: "hsl(262 15% 98%)",
                             }}
                           >
                             <Grid container spacing={2} alignItems="center">
                               <Grid item xs={12} sm={4}>
                                 <Autocomplete
                                   options={availableSkills}
-                                  getOptionLabel={(option) => option.name || ''}
-                                  value={availableSkills.find(s => s.id === skill.skillId) || null}
+                                  getOptionLabel={(option) => option.name || ""}
+                                  value={
+                                    availableSkills.find(
+                                      (s) => s.id === skill.skillId
+                                    ) || null
+                                  }
                                   onChange={(event, value) => {
-                                    setFieldValue(`skills.${index}.skillId`, value?.id || '');
+                                    setFieldValue(
+                                      `skills.${index}.skillId`,
+                                      value?.id || ""
+                                    );
                                   }}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
                                       label="Skill"
-                                      error={touched.skills?.[index]?.skillId && Boolean(errors.skills?.[index]?.skillId)}
-                                      helperText={touched.skills?.[index]?.skillId && errors.skills?.[index]?.skillId}
+                                      error={
+                                        touched.skills?.[index]?.skillId &&
+                                        Boolean(errors.skills?.[index]?.skillId)
+                                      }
+                                      helperText={
+                                        touched.skills?.[index]?.skillId &&
+                                        errors.skills?.[index]?.skillId
+                                      }
                                     />
                                   )}
                                 />
                               </Grid>
-                              
                               <Grid item xs={12} sm={3}>
                                 <FormControl fullWidth>
                                   <InputLabel>Proficiency</InputLabel>
                                   <Select
                                     value={skill.proficiencyLevel}
-                                    onChange={(e) => setFieldValue(`skills.${index}.proficiencyLevel`, e.target.value)}
+                                    onChange={(e) =>
+                                      setFieldValue(
+                                        `skills.${index}.proficiencyLevel`,
+                                        e.target.value
+                                      )
+                                    }
                                     label="Proficiency"
                                   >
                                     {proficiencyLevels.map((level) => (
@@ -242,23 +276,28 @@ const EmployeeForm = ({ open, onClose, onSubmit, employee = null, availableSkill
                                   </Select>
                                 </FormControl>
                               </Grid>
-                              
                               <Grid item xs={12} sm={3}>
                                 <TextField
                                   fullWidth
                                   type="number"
                                   label="Years of Experience"
                                   value={skill.yearsOfExperience}
-                                  onChange={(e) => setFieldValue(`skills.${index}.yearsOfExperience`, parseInt(e.target.value) || 0)}
-                                  InputProps={{ inputProps: { min: 0, max: 50 } }}
+                                  onChange={(e) =>
+                                    setFieldValue(
+                                      `skills.${index}.yearsOfExperience`,
+                                      parseInt(e.target.value) || 0
+                                    )
+                                  }
+                                  InputProps={{
+                                    inputProps: { min: 0, max: 50 },
+                                  }}
                                 />
                               </Grid>
-                              
                               <Grid item xs={12} sm={2}>
                                 <IconButton
                                   onClick={() => remove(index)}
                                   disabled={values.skills.length === 1}
-                                  sx={{ color: 'error.main' }}
+                                  sx={{ color: "error.main" }}
                                 >
                                   <Delete />
                                 </IconButton>
@@ -266,15 +305,16 @@ const EmployeeForm = ({ open, onClose, onSubmit, employee = null, availableSkill
                             </Grid>
                           </Box>
                         ))}
-                        
                         <Button
                           startIcon={<Add />}
-                          onClick={() => push({
-                            skillId: '',
-                            proficiencyLevel: 'Beginner',
-                            yearsOfExperience: 0,
-                            certifications: []
-                          })}
+                          onClick={() =>
+                            push({
+                              skillId: "",
+                              proficiencyLevel: "Beginner",
+                              yearsOfExperience: 0,
+                              certifications: [],
+                            })
+                          }
                           sx={{ mt: 1 }}
                         >
                           Add Skill
@@ -283,25 +323,136 @@ const EmployeeForm = ({ open, onClose, onSubmit, employee = null, availableSkill
                     )}
                   </FieldArray>
                 </Grid>
+
+                {/* Certificates Section */}
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h6"
+                    sx={{ mb: 2, color: "primary.main" }}
+                  >
+                    Certificates
+                  </Typography>
+                  <FieldArray name="certificates">
+                    {({ push, remove }) => (
+                      <Box>
+                        {values.certificates.map((cert, idx) => (
+                          <Box
+                            key={idx}
+                            sx={{
+                              p: 2,
+                              mb: 2,
+                              border: "1px solid hsl(262 20% 91%)",
+                              borderRadius: 2,
+                              backgroundColor: "hsl(262 15% 98%)",
+                            }}
+                          >
+                            <Grid container spacing={2} alignItems="center">
+                              <Grid item xs={12} sm={4}>
+                                <TextField
+                                  fullWidth
+                                  label="Certificate Name"
+                                  value={cert.name}
+                                  onChange={(e) =>
+                                    setFieldValue(
+                                      `certificates.${idx}.name`,
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </Grid>
+                              <Grid item xs={12} sm={3}>
+                                <TextField
+                                  fullWidth
+                                  label="Issued By"
+                                  value={cert.issuedBy}
+                                  onChange={(e) =>
+                                    setFieldValue(
+                                      `certificates.${idx}.issuedBy`,
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </Grid>
+                              <Grid item xs={12} sm={2}>
+                                <TextField
+                                  fullWidth
+                                  label="Issue Date"
+                                  type="date"
+                                  InputLabelProps={{ shrink: true }}
+                                  value={cert.issueDate || ""}
+                                  onChange={(e) =>
+                                    setFieldValue(
+                                      `certificates.${idx}.issueDate`,
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </Grid>
+                              <Grid item xs={12} sm={2}>
+                                <TextField
+                                  fullWidth
+                                  label="Expiry Date"
+                                  type="date"
+                                  InputLabelProps={{ shrink: true }}
+                                  value={cert.expiryDate || ""}
+                                  onChange={(e) =>
+                                    setFieldValue(
+                                      `certificates.${idx}.expiryDate`,
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </Grid>
+                              <Grid item xs={12} sm={1}>
+                                <IconButton
+                                  onClick={() => remove(idx)}
+                                  sx={{ color: "error.main" }}
+                                >
+                                  <Delete />
+                                </IconButton>
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        ))}
+                        <Button
+                          startIcon={<Add />}
+                          onClick={() =>
+                            push({
+                              name: "",
+                              issuedBy: "",
+                              issueDate: "",
+                              expiryDate: "",
+                            })
+                          }
+                          sx={{ mt: 1 }}
+                        >
+                          Add Certificate
+                        </Button>
+                      </Box>
+                    )}
+                  </FieldArray>
+                </Grid>
               </Grid>
             </DialogContent>
-            
+
             <DialogActions sx={{ p: 3, pt: 1 }}>
               <Button onClick={onClose} color="inherit">
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 variant="contained"
                 disabled={isSubmitting}
                 sx={{
-                  background: 'linear-gradient(135deg, hsl(262 47% 45%), hsl(262 47% 55%))',
-                  '&:hover': {
-                    background: 'linear-gradient(135deg, hsl(262 47% 40%), hsl(262 47% 50%))'
-                  }
+                  background:
+                    "linear-gradient(135deg, hsl(262 47% 45%), hsl(262 47% 55%))",
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, hsl(262 47% 40%), hsl(262 47% 50%))",
+                  },
                 }}
               >
-                {employee ? 'Update' : 'Create'} Employee
+                {employee ? "Update" : "Create"} Employee
               </Button>
             </DialogActions>
           </Form>
