@@ -125,7 +125,7 @@ const Dashboard = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          {/* <Grid item xs={12} sm={6} md={3}>
             <StatsCard
               title="Skill Growth"
               value="23%"
@@ -143,10 +143,10 @@ const Dashboard = () => {
               color="info"
               trend={{ value: 15, positive: true }}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
         {/* Charts */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} md={6}>
             <Box sx={{ width: "100%" }}>
               <SkillDistributionChart
@@ -165,10 +165,10 @@ const Dashboard = () => {
               />
             </Box>
           </Grid>
-        </Grid>
-        Recent Activities
+        </Grid> */}
+        {/* Recent Activities */}
         <Grid container spacing={3}>
-          <Grid item xs={12} lg={8}>
+          {/* <Grid item xs={12} lg={8}>
             <Card
               sx={{
                 background:
@@ -232,10 +232,10 @@ const Dashboard = () => {
                 </TableContainer>
               </CardContent>
             </Card>
-          </Grid>
+          </Grid> */}
 
           {/* Top Skills */}
-          <Grid item xs={12} lg={4}>
+          {/* <Grid item xs={12} lg={4}>
             <Card
               sx={{
                 background:
@@ -286,7 +286,7 @@ const Dashboard = () => {
                 </Box>
               </CardContent>
             </Card>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
     </Layout>
