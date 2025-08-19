@@ -46,6 +46,7 @@ import { Formik, Form } from "formik";
 import { skillValidationSchema } from "../shared/validation/employeeValidation";
 import useFetch from "../hooks/UseFetch";
 import { skillsAPI } from "../apis/userApi";
+import { useUser } from "../context/UserContext";
 
 const SkillManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,12 +61,15 @@ const SkillManagement = () => {
     severity: "success",
   });
 
+  const { user } = useUser();
+  const companyId = user?.companyId ?? null;
+
   const {
     data: skills,
     loading: skillsLoading,
     error: skillsError,
     refetch: refetchSkills,
-  } = useFetch(skillsAPI.getAll);
+  } = useFetch(() => skillsAPI.getAll(companyId), [companyId]);
 
   const categories = [
     "All",
@@ -442,7 +446,9 @@ const SkillManagement = () => {
                     "Employees",
                     "Actions",
                   ].map((h) => (
-                    <TableCell key={h}>{h}</TableCell>
+                    <TableCell key={h} sx={{ fontWeight: "bold" }}>
+                      {h}
+                    </TableCell>
                   ))}
                 </TableRow>
               </TableHead>

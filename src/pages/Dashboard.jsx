@@ -19,10 +19,21 @@ import StatsCard from "../components/StatsCard";
 import SkillDistributionChart from "../components/SkillDistributionChart";
 import useFetch from "../hooks/UseFetch";
 import { employeeAPI, skillsAPI, dashboardAPI } from "../apis/userApi";
+import { useUser } from "../context/UserContext";
 
 const Dashboard = () => {
-  const { data: employees } = useFetch(employeeAPI.getAll);
-  const { data: skills } = useFetch(skillsAPI.getAll);
+  const { user } = useUser();
+  const companyId = user?.companyId ?? null;
+
+  const { data: employees } = useFetch(
+    () => employeeAPI.getAll(companyId),
+    [companyId]
+  );
+  // Use company-assigned skills for dashboard card
+  const { data: companySkills } = useFetch(
+    () => skillsAPI.getCompanyAssigned(companyId),
+    [companyId]
+  );
 
   const { data: skillDistribution } = useFetch(
     dashboardAPI.getSkillDistribution
@@ -86,9 +97,14 @@ const Dashboard = () => {
         <Typography variant="body1" sx={{ color: "text.secondary", mb: 4 }}>
           Overview of your organization's skill landscape
         </Typography>
-
         {/* Stats Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid
+          container
+          spacing={3}
+          justifyContent="center"
+          alignItems="stretch"
+          sx={{ mb: 4 }}
+        >
           <Grid item xs={12} sm={6} md={3}>
             <StatsCard
               title="Total Employees"
@@ -98,16 +114,18 @@ const Dashboard = () => {
               trend={{ value: 12, positive: true }}
             />
           </Grid>
+
           <Grid item xs={12} sm={6} md={3}>
             <StatsCard
               title="Total Skills"
-              value={skills?.length || 0}
+              value={companySkills?.length || 0}
               icon={<Build />}
               color="secondary"
               trend={{ value: 8, positive: true }}
             />
           </Grid>
-          {/* <Grid item xs={12} sm={6} md={3}>
+
+          <Grid item xs={12} sm={6} md={3}>
             <StatsCard
               title="Skill Growth"
               value="23%"
@@ -116,6 +134,7 @@ const Dashboard = () => {
               trend={{ value: 5, positive: true }}
             />
           </Grid>
+
           <Grid item xs={12} sm={6} md={3}>
             <StatsCard
               title="Certifications"
@@ -124,27 +143,29 @@ const Dashboard = () => {
               color="info"
               trend={{ value: 15, positive: true }}
             />
-          </Grid> */}
+          </Grid>
         </Grid>
-
         {/* Charts */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} md={6}>
-            <SkillDistributionChart
-              data={skillDistributionData}
-              title="Skill Proficiency Distribution"
-              type="pie"
-            />
+            <Box sx={{ width: "100%" }}>
+              <SkillDistributionChart
+                data={skillDistributionData}
+                title="Skill Proficiency Distribution"
+                type="pie"
+              />
+            </Box>
           </Grid>
           <Grid item xs={12} md={6}>
-            <SkillDistributionChart
-              data={departmentSkillsData}
-              title="Skills by Department"
-              type="bar"
-            />
+            <Box sx={{ width: "100%" }}>
+              <SkillDistributionChart
+                data={departmentSkillsData}
+                title="Skills by Department"
+                type="bar"
+              />
+            </Box>
           </Grid>
         </Grid>
-
         Recent Activities
         <Grid container spacing={3}>
           <Grid item xs={12} lg={8}>
@@ -214,7 +235,7 @@ const Dashboard = () => {
           </Grid>
 
           {/* Top Skills */}
-          {/* <Grid item xs={12} lg={4}>
+          <Grid item xs={12} lg={4}>
             <Card
               sx={{
                 background:
@@ -265,7 +286,7 @@ const Dashboard = () => {
                 </Box>
               </CardContent>
             </Card>
-          </Grid> */}
+          </Grid>
         </Grid>
       </Box>
     </Layout>

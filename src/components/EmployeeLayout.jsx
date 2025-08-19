@@ -83,9 +83,6 @@ const EmployeeLayout = ({ children }) => {
           flexGrow: 1,
           mt: 8,
           backgroundColor: "hsl(262 15% 99%)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
           p: 3,
         }}
       >

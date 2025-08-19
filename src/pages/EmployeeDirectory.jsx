@@ -37,6 +37,7 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import useFetch from "../hooks/UseFetch";
 import { employeeAPI } from "../apis/userApi";
+import { useUser } from "../context/UserContext";
 
 const EmployeeDirectory = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,12 +51,15 @@ const EmployeeDirectory = () => {
     severity: "success",
   });
 
+  const { user } = useUser();
+  const companyId = user?.companyId ?? null;
+
   const {
     data: employees,
     loading: empLoading,
     error: empError,
     refetch: refetchEmps,
-  } = useFetch(employeeAPI.getAll);
+  } = useFetch(() => employeeAPI.getAll(companyId), [companyId]);
 
   const roles = ["All", "admin", "employee"];
 
@@ -84,6 +88,30 @@ const EmployeeDirectory = () => {
   const closeDiag = () => {
     setSelectedEmp(null);
     setDialogOpen(false);
+  };
+
+  // helper: format date for <input type="date"> (YYYY-MM-DD) and display
+  const toInputDate = (d) => {
+    if (!d) return "";
+    // if it's already YYYY-MM-DD, return as-is
+    if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+    const dt = new Date(d);
+    if (isNaN(dt)) return "";
+    const yyyy = dt.getFullYear();
+    const mm = String(dt.getMonth() + 1).padStart(2, "0");
+    const dd = String(dt.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const displayDate = (d) => {
+    if (!d) return "-";
+    try {
+      const dt = new Date(d);
+      if (isNaN(dt)) return d;
+      return dt.toLocaleDateString();
+    } catch {
+      return d;
+    }
   };
 
   const schema = (isEdit) => {
@@ -122,8 +150,21 @@ const EmployeeDirectory = () => {
     const payload = { ...rest };
     if (password) payload.password = password;
 
+    // inject companyId
+    if (!companyId) {
+      setSnackbar({
+        open: true,
+        message: "Your account is missing a companyId — cannot create employee",
+        severity: "error",
+      });
+      setSubmitting(false);
+      return;
+    }
+    payload.companyId = companyId;
+
     try {
       if (selectedEmp) {
+        // include companyId for update as well (keeps ownership)
         await employeeAPI.update(selectedEmp.id, payload);
         setSnackbar({ open: true, message: "Updated!", severity: "success" });
       } else {
@@ -135,7 +176,9 @@ const EmployeeDirectory = () => {
       closeDiag();
     } catch (err) {
       console.error(err);
-      setSnackbar({ open: true, message: "Save error", severity: "error" });
+      const message =
+        err.response?.data?.message || err.message || "Save error occurred";
+      setSnackbar({ open: true, message, severity: "error" });
     } finally {
       setSubmitting(false);
     }
@@ -238,12 +281,14 @@ const EmployeeDirectory = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Position</TableCell>
-                  <TableCell>Join Date</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Role</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Position</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Join Date</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                    Actions
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -253,7 +298,7 @@ const EmployeeDirectory = () => {
                     <TableCell>{e.email}</TableCell>
                     <TableCell>{e.role}</TableCell>
                     <TableCell>{e.position || "-"}</TableCell>
-                    <TableCell>{e.joinDate}</TableCell>
+                    <TableCell>{displayDate(e.joinDate)}</TableCell>
                     <TableCell align="right">
                       <Button
                         size="small"
@@ -346,9 +391,9 @@ const EmployeeDirectory = () => {
             initialValues={{
               name: selectedEmp?.name || "",
               email: selectedEmp?.email || "",
-              role: selectedEmp?.role || "",
+              role: selectedEmp?.role || "employee",
               position: selectedEmp?.position || "",
-              joinDate: selectedEmp?.joinDate || "",
+              joinDate: selectedEmp ? toInputDate(selectedEmp?.joinDate) : "",
               password: "",
             }}
             validationSchema={schema(!!selectedEmp)}

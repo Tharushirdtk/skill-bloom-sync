@@ -26,6 +26,7 @@ import { Edit, Save, Cancel } from "@mui/icons-material";
 import EmployeeLayout from "../components/EmployeeLayout";
 import { useUser } from "../context/UserContext";
 import { userAPI, skillsAPI, employeeAPI } from "../apis/userApi";
+import useFetch from "../hooks/UseFetch";
 import { Formik, Form, Field } from "formik";
 import { TextField as FormikTextField } from "formik-mui";
 import * as Yup from "yup";
@@ -216,7 +217,16 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [initialValues, setInitialValues] = useState(null);
-  const [availableSkills, setAvailableSkills] = useState([]);
+  // Use useFetch for skillsAPI.getAll(companyId)
+  const {
+    data: availableSkills,
+    loading: availableSkillsLoading,
+    error: availableSkillsError,
+    refetch: refetchAvailableSkills,
+  } = useFetch(
+    () => skillsAPI.getAll(user?.companyId ?? null),
+    [user?.companyId]
+  );
   const [assignedSkills, setAssignedSkills] = useState([]);
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
   const [skillDialogInitial, setSkillDialogInitial] = useState(null);
@@ -244,15 +254,8 @@ const Profile = () => {
         });
 
         setLoadingSkills(true);
-        const [skillListRaw, assignedRaw] = await Promise.all([
-          skillsAPI.getAll(),
-          employeeAPI.getSkills(me.id),
-        ]);
-
-        const skillList = unwrapResponse(skillListRaw);
+        const assignedRaw = await employeeAPI.getSkills(me.id);
         const assigned = unwrapResponse(assignedRaw) || [];
-
-        setAvailableSkills(skillList || []);
         setAssignedSkills(Array.isArray(assigned) ? assigned : []);
       } catch (err) {
         console.error("Error fetching profile/skills:", err);
@@ -290,8 +293,7 @@ const Profile = () => {
 
   const reloadAvailableSkills = async () => {
     try {
-      const list = await skillsAPI.getAll();
-      setAvailableSkills(list || []);
+      await refetchAvailableSkills();
     } catch (err) {
       console.error("Failed to reload available skills:", err);
     }
@@ -615,7 +617,7 @@ const Profile = () => {
                     </Button>
                   </Box>
 
-                  {loadingSkills ? (
+                  {loadingSkills || availableSkillsLoading ? (
                     <Box display="flex" justifyContent="center" py={2}>
                       <CircularProgress />
                     </Box>

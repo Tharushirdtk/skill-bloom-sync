@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import {
   PieChart,
@@ -19,7 +19,7 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
 
   const COLORS = [
     "hsl(40 100% 65%)", // Beginner
-    "hsl(45 93% 58%)",  // Intermediate
+    "hsl(45 93% 58%)", // Intermediate
     "hsl(120 61% 50%)", // Advanced
     "hsl(262 47% 45%)", // Expert
   ];
@@ -38,7 +38,7 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
       }
       // Map { level, count }
       else if ("level" in data[0] && "count" in data[0]) {
-        setChartData(data.map(d => ({ name: d.level, value: d.count })));
+        setChartData(data.map((d) => ({ name: d.level, value: d.count })));
       }
       // Unknown shape, try guessing
       else {
@@ -92,6 +92,7 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
   return (
     <Card
       sx={{
+        width: "100%",
         height: "100%",
         background:
           "linear-gradient(135deg, hsl(262 47% 45% / 0.02), hsl(262 47% 55% / 0.05))",
@@ -99,7 +100,8 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
         borderRadius: 3,
       }}
     >
-      <CardContent sx={{ p: 3 }}>
+      <CardContent sx={{ p: 3, width: "100%" }}>
+        {" "}
         <Typography
           variant="h6"
           sx={{
@@ -111,8 +113,12 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
         >
           {title}
         </Typography>
-
-        <Box sx={{ height: 300 }}>
+        <Box
+          sx={{
+            height: 300,
+            width: "100%",
+          }}
+        >
           {chartData.length === 0 ? (
             <Typography
               variant="body2"
@@ -141,7 +147,9 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
                     ))}
                   </Pie>
                   <Tooltip content={<CustomTooltip />} />
-                  <Legend wrapperStyle={{ paddingTop: "20px", fontSize: "14px" }} />
+                  <Legend
+                    wrapperStyle={{ paddingTop: "20px", fontSize: "14px" }}
+                  />
                 </PieChart>
               ) : (
                 <BarChart
@@ -152,7 +160,11 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
                     strokeDasharray="3 3"
                     stroke="hsl(262 20% 91%)"
                   />
-                  <XAxis dataKey="name" stroke="hsl(262 47% 25%)" fontSize={12} />
+                  <XAxis
+                    dataKey="name"
+                    stroke="hsl(262 47% 25%)"
+                    fontSize={12}
+                  />
                   <YAxis stroke="hsl(262 47% 25%)" fontSize={12} />
                   <Tooltip content={<CustomTooltip />} />
                   <Bar

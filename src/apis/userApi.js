@@ -55,7 +55,7 @@ export const companyAPI = {
 
 // Employee API endpoints
 export const employeeAPI = {
-  getAll: () => api.get("/employees"),
+  getAll: (companyId) => api.get(`/employees?companyId=${companyId}`),
   getById: (id) => api.get(`/employees/${id}`),
   create: (data) => api.post("/employees", data),
   update: (id, data) => api.put(`/employees/${id}`, data),
@@ -82,7 +82,8 @@ export const employeeAPI = {
 
 // Skills API endpoints
 export const skillsAPI = {
-  getAll: () => api.get("/skills").then((res) => res.data),
+  getAll: (companyId) =>
+    api.get(`/skills?companyId=${companyId}`).then((res) => res.data),
   create: (data) => api.post("/skills", data).then((res) => res.data),
   update: (id, data) => api.put(`/skills/${id}`, data).then((res) => res.data),
   delete: (id) => api.delete(`/skills/${id}`).then((res) => res.data),
@@ -90,6 +91,10 @@ export const skillsAPI = {
   // --- New: users who have a particular skill ---
   getUsersBySkill: (skillId) =>
     api.get(`/skills/${skillId}/users`).then((res) => res.data),
+
+  // Get only skills assigned to employees of a company
+  getCompanyAssigned: (companyId) =>
+    api.get(`/skills/company-assigned?companyId=${companyId}`).then((res) => res.data),
 };
 
 // User API endpoints (profile)
@@ -98,11 +103,13 @@ export const userAPI = {
 };
 
 export const dashboardAPI = {
-  getSkillDistribution: () => api.get("/dashboard/skill-distribution").then(res => res.data),
-  getSkillsByDepartment: () => api.get("/dashboard/skills-by-department").then(res => res.data),
-  getRecentActivities: () => api.get("/dashboard/recent-activities").then(res => res.data),
-  getTopSkills: () => api.get("/dashboard/top-skills").then(res => res.data),
+  getSkillDistribution: () =>
+    api.get("/dashboard/skill-distribution").then((res) => res.data),
+  getSkillsByDepartment: () =>
+    api.get("/dashboard/skills-by-department").then((res) => res.data),
+  getRecentActivities: () =>
+    api.get("/dashboard/recent-activities").then((res) => res.data),
+  getTopSkills: () => api.get("/dashboard/top-skills").then((res) => res.data),
 };
-
 
 export default api;
