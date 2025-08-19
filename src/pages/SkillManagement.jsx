@@ -228,7 +228,7 @@ const SkillManagement = () => {
                     )}
                   </FormControl>
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <TextField
                     fullWidth
                     multiline
@@ -241,7 +241,7 @@ const SkillManagement = () => {
                     error={touched.description && Boolean(errors.description)}
                     helperText={touched.description && errors.description}
                   />
-                </Grid>
+                </Grid> */}
               </Grid>
             </DialogContent>
             <DialogActions sx={{ px: 3, pb: 2 }}>
@@ -442,7 +442,7 @@ const SkillManagement = () => {
                   {[
                     "Name",
                     "Category",
-                    "Description",
+                    // "Description",
                     "Employees",
                     "Actions",
                   ].map((h) => (
@@ -457,7 +457,7 @@ const SkillManagement = () => {
                   <TableRow key={skill.id}>
                     <TableCell>{skill.name}</TableCell>
                     <TableCell>{skill.category}</TableCell>
-                    <TableCell
+                    {/* <TableCell
                       sx={{
                         maxWidth: 300,
                         whiteSpace: "nowrap",
@@ -466,7 +466,7 @@ const SkillManagement = () => {
                       }}
                     >
                       {skill.description}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>{skill.employeeCount}</TableCell>
                     <TableCell>
                       <IconButton

@@ -101,7 +101,6 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
       }}
     >
       <CardContent sx={{ p: 3, width: "100%" }}>
-        {" "}
         <Typography
           variant="h6"
           sx={{
@@ -151,6 +150,36 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
                     wrapperStyle={{ paddingTop: "20px", fontSize: "14px" }}
                   />
                 </PieChart>
+              ) : type === "horizontalBar" ? (
+                <BarChart
+                  layout="vertical"
+                  data={chartData}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(262 20% 91%)"
+                  />
+                  <XAxis
+                    type="number"
+                    dataKey="value"
+                    stroke="hsl(262 47% 25%)"
+                    fontSize={12}
+                    allowDecimals={false}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    stroke="hsl(262 47% 25%)"
+                    fontSize={12}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar
+                    dataKey="value"
+                    fill="hsl(262 47% 45%)"
+                    radius={[0, 4, 4, 0]}
+                  />
+                </BarChart>
               ) : (
                 <BarChart
                   data={chartData}
@@ -165,7 +194,12 @@ const SkillDistributionChart = ({ data = [], type = "pie", title }) => {
                     stroke="hsl(262 47% 25%)"
                     fontSize={12}
                   />
-                  <YAxis stroke="hsl(262 47% 25%)" fontSize={12} />
+                  <YAxis
+                    dataKey="value"
+                    stroke="hsl(262 47% 25%)"
+                    fontSize={12}
+                    allowDecimals={false}
+                  />
                   <Tooltip content={<CustomTooltip />} />
                   <Bar
                     dataKey="value"

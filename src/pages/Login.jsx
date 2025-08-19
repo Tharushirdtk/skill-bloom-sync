@@ -55,7 +55,7 @@ export default function Login() {
     >
       <Container maxWidth="xs">
         <Card sx={{ borderRadius: 4, boxShadow: 3 }}>
-          <CardContent>
+            <CardContent sx={{ pt: 5, px: 4 }}>
             <Typography variant="h4" align="center" gutterBottom>
               SkillSmart
             </Typography>

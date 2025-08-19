@@ -164,37 +164,27 @@ const EmployeeSkillDialog = ({
                     <MenuItem value="">
                       <em>None</em>
                     </MenuItem>
-                    {availableSkills.map((s) => (
-                      <MenuItem key={s.id} value={s.id}>
-                        {s.name}
+                    {availableSkills.map((skill) => (
+                      <MenuItem key={skill.id} value={skill.id}>
+                        {skill.name}
                       </MenuItem>
                     ))}
                   </Select>
-                  {touched.skillId && errors.skillId && (
-                    <FormHelperText>{errors.skillId}</FormHelperText>
-                  )}
+                  <FormHelperText>
+                    {touched.skillId && errors.skillId}
+                  </FormHelperText>
                 </FormControl>
               )}
-
               <Field
                 component={FormikTextField}
                 name="proficiencyScore"
+                label="Proficiency Score"
                 type="number"
-                label="Proficiency Score (0–100)"
-                inputProps={{ min: 0, max: 100 }}
                 fullWidth
+                inputProps={{ min: 0, max: 100 }}
               />
-
-              <Typography variant="caption" color="text.secondary">
-                Provide a numeric score (0–100). The backend will compute the
-                human-friendly level.
-              </Typography>
             </DialogContent>
-
-            <DialogActions sx={{ px: 3, pb: 2 }}>
-              <Button onClick={onClose} disabled={isSubmitting}>
-                Cancel
-              </Button>
+            <DialogActions>
               <Button type="submit" variant="contained" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <CircularProgress size={20} />
@@ -203,6 +193,9 @@ const EmployeeSkillDialog = ({
                 ) : (
                   "Assign"
                 )}
+              </Button>
+              <Button onClick={onClose} disabled={isSubmitting}>
+                Cancel
               </Button>
             </DialogActions>
           </Form>
@@ -418,262 +411,272 @@ const Profile = () => {
 
   return (
     <EmployeeLayout>
-      {/* outer wrapper centers content vertically and horizontally */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "70vh", // centers within the viewport area
-          width: "100%",
-          px: 2,
-        }}
-      >
-        {/* inner container controls max width of the content */}
-        <Box sx={{ width: "100%", maxWidth: 1000, mx: "auto", py: 4 }}>
-          <Grid container spacing={3}>
-            {/* Left Panel */}
-            <Grid item xs={12} md={4}>
-              <Card
-                sx={{
-                  p: 3,
-                  borderRadius: 3,
-                  boxShadow: 3,
-                  textAlign: "center",
-                }}
-              >
-                <Avatar
-                  sx={{
-                    width: 90,
-                    height: 90,
-                    mx: "auto",
-                    mb: 2,
-                    bgcolor: "primary.main",
-                  }}
-                >
-                  {user?.name?.charAt(0) || "U"}
-                </Avatar>
-                <Typography variant="h6" fontWeight={600} gutterBottom>
-                  {user?.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {user?.email}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {user?.position || "No Position"}
-                </Typography>
-                <Divider sx={{ my: 2 }} />
-                {!isEditing && (
-                  <Button
-                    variant="contained"
-                    startIcon={<Edit />}
-                    fullWidth
-                    sx={{ textTransform: "none" }}
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Edit Profile
-                  </Button>
-                )}
-              </Card>
-            </Grid>
-
-            {/* Right Panel */}
-            <Grid item xs={12} md={8}>
-              <Card sx={{ p: 9, borderRadius: 5, boxShadow: 3 }}>
-                <Typography variant="h6" fontWeight={600} gutterBottom>
-                  Profile Details
-                </Typography>
-
-                {isEditing ? (
-                  <Formik
-                    initialValues={initialValues}
-                    validationSchema={validationSchema}
-                    enableReinitialize
-                    onSubmit={handleProfileSubmit}
-                  >
-                    {({ isSubmitting }) => (
-                      <Form>
-                        <Grid container spacing={2} mt={1}>
-                          <Grid item xs={12} sm={6}>
-                            <Field
-                              component={FormikTextField}
-                              name="fname"
-                              label="First Name"
-                              fullWidth
-                              autoFocus
-                            />
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <Field
-                              component={FormikTextField}
-                              name="lname"
-                              label="Last Name"
-                              fullWidth
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <Field
-                              component={FormikTextField}
-                              name="email"
-                              label="Email"
-                              fullWidth
-                            />
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <Field name="position">
-                              {({ field, form }) => (
-                                <FormControl fullWidth>
-                                  <InputLabel id="position-select-label">
-                                    Position
-                                  </InputLabel>
-                                  <Select
-                                    labelId="position-select-label"
-                                    {...field}
-                                    onChange={(e) =>
-                                      form.setFieldValue(
-                                        "position",
-                                        e.target.value
-                                      )
-                                    }
-                                  >
-                                    <MenuItem value="">
-                                      <em>None</em>
-                                    </MenuItem>
-                                    <MenuItem value="Developer">
-                                      Developer
-                                    </MenuItem>
-                                    <MenuItem value="Manager">Manager</MenuItem>
-                                    <MenuItem value="Designer">
-                                      Designer
-                                    </MenuItem>
-                                  </Select>
-                                </FormControl>
-                              )}
-                            </Field>
-                          </Grid>
-
-                          <Grid item xs={12} display="flex" gap={2} mt={1}>
-                            <Button
-                              type="submit"
-                              variant="contained"
-                              startIcon={<Save />}
-                              disabled={isSubmitting}
-                              sx={{ flex: 1 }}
-                            >
-                              {isSubmitting ? (
-                                <CircularProgress size={20} />
-                              ) : (
-                                "Save"
-                              )}
-                            </Button>
-                            <Button
-                              variant="outlined"
-                              startIcon={<Cancel />}
-                              onClick={() => setIsEditing(false)}
-                              disabled={isSubmitting}
-                              sx={{ flex: 1 }}
-                            >
-                              Cancel
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </Form>
-                    )}
-                  </Formik>
-                ) : (
-                  <Box mt={2}>
-                    <Typography>
-                      <strong>Name:</strong> {user.name}
-                    </Typography>
-                    <Typography>
-                      <strong>Email:</strong> {user.email}
-                    </Typography>
-                    <Typography>
-                      <strong>Position:</strong> {user.position}
-                    </Typography>
-                    <Typography>
-                      <strong>Joined Date:</strong> {user.joinDate}
-                    </Typography>
-                  </Box>
-                )}
-
-                {/* Skills Section */}
-                <Box mt={4}>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    mb={1}
-                  >
-                    <Typography variant="h6" fontWeight={600}>
-                      Skills
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      onClick={handleAddSkillClick}
-                    >
-                      Add Skill
-                    </Button>
-                  </Box>
-
-                  {loadingSkills || availableSkillsLoading ? (
-                    <Box display="flex" justifyContent="center" py={2}>
-                      <CircularProgress />
-                    </Box>
-                  ) : assignedSkills.length === 0 ? (
-                    <Typography color="text.secondary">
-                      No skills assigned yet.
-                    </Typography>
-                  ) : (
-                    <Grid container spacing={2} mt={1}>
-                      {assignedSkills.map((assigned) => (
-                        <Grid item key={assigned.id} xs={12} sm={6} md={4}>
-                          <AssignedSkillCard
-                            assigned={assigned}
-                            onEdit={handleEditAssignedSkill}
-                            onDelete={handleDeleteAssignedSkill}
-                          />
-                        </Grid>
-                      ))}
-                    </Grid>
-                  )}
-
-                  <Box mt={3}>
-                    <Typography variant="subtitle2" fontWeight={500}>
-                      Available skills (quick assign)
-                    </Typography>
-                    <Stack direction="row" spacing={1} flexWrap="wrap" mt={1}>
-                      {availableSkills.map((s) => (
-                        <Button
-                          key={s.id}
-                          size="small"
-                          variant="outlined"
-                          onClick={() => handleQuickAssign(s.id)}
-                        >
-                          {s.name}
-                        </Button>
-                      ))}
-                    </Stack>
-                  </Box>
-                </Box>
-              </Card>
-            </Grid>
-          </Grid>
-
-          <EmployeeSkillDialog
-            open={skillDialogOpen}
-            onClose={() => {
-              setSkillDialogOpen(false);
-              setSkillDialogInitial(null);
-              setPrefillSkillId(null);
+      <Box sx={{ width: "100%", maxWidth: 1100, mx: "auto", py: 0 }}>
+        {/* Main Content Card */}
+        <Grid item xs={12} md={8} sx={{ display: "flex" }}>
+          <Card
+            sx={{
+              borderRadius: 5,
+              boxShadow: 4,
+              px: 3,
+              py: 5,
+              background: "white",
+              width: "100%",
             }}
-            availableSkills={availableSkills}
-            initial={skillDialogInitial}
-            prefillSkillId={prefillSkillId}
-            onSave={handleSaveAssignedSkill}
-          />
-        </Box>
+          >
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
+            >
+              <Typography variant="h5" fontWeight={700} gutterBottom>
+                Profile Details
+              </Typography>
+              {!isEditing && (
+                <Button
+                  variant="contained"
+                  startIcon={<Edit />}
+                  size="medium"
+                  sx={{
+                    background: "linear-gradient(135deg, #7c3aed, #a78bfa)",
+                    fontWeight: "bold",
+                    boxShadow: "0 2px 8px 0 rgba(124,58,237,0.12)",
+                  }}
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit Profile
+                </Button>
+              )}
+            </Box>
+
+            {isEditing ? (
+              <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                enableReinitialize
+                onSubmit={handleProfileSubmit}
+              >
+                {({ isSubmitting }) => (
+                  <Form>
+                    <Grid container spacing={2} mt={1}>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          component={FormikTextField}
+                          name="fname"
+                          label="First Name"
+                          fullWidth
+                          autoFocus
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          component={FormikTextField}
+                          name="lname"
+                          label="Last Name"
+                          fullWidth
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Field
+                          component={FormikTextField}
+                          name="email"
+                          label="Email"
+                          fullWidth
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Field name="position">
+                          {({ field, form }) => (
+                            <FormControl fullWidth>
+                              <InputLabel id="position-select-label">
+                                Position
+                              </InputLabel>
+                              <Select
+                                labelId="position-select-label"
+                                {...field}
+                                onChange={(e) =>
+                                  form.setFieldValue("position", e.target.value)
+                                }
+                              >
+                                <MenuItem value="">
+                                  <em>None</em>
+                                </MenuItem>
+                                <MenuItem value="Developer">Developer</MenuItem>
+                                <MenuItem value="Manager">Manager</MenuItem>
+                                <MenuItem value="Designer">Designer</MenuItem>
+                              </Select>
+                            </FormControl>
+                          )}
+                        </Field>
+                      </Grid>
+                      <Grid item xs={12} display="flex" gap={2} mt={1}>
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          startIcon={<Save />}
+                          disabled={isSubmitting}
+                          sx={{
+                            flex: 1,
+                            py: 1.2,
+                            fontWeight: "bold",
+                            fontSize: "1rem",
+                          }}
+                        >
+                          {isSubmitting ? (
+                            <CircularProgress size={20} />
+                          ) : (
+                            "Save"
+                          )}
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={<Cancel />}
+                          onClick={() => setIsEditing(false)}
+                          disabled={isSubmitting}
+                          sx={{
+                            flex: 1,
+                            py: 1.2,
+                            fontWeight: "bold",
+                            fontSize: "1rem",
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Form>
+                )}
+              </Formik>
+            ) : (
+              <Box mt={2}>
+                <Stack spacing={2}>
+                  <Box display="flex" alignItems="center" gap={2}>
+                    <Typography variant="subtitle1" color="text.secondary" fontWeight={500} minWidth={120}>
+                      Name
+                    </Typography>
+                    <Typography variant="body1" fontWeight={600}>
+                      {user.name}
+                    </Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" gap={2}>
+                    <Typography variant="subtitle1" color="text.secondary" fontWeight={500} minWidth={120}>
+                      Email
+                    </Typography>
+                    <Typography variant="body1" fontWeight={600}>
+                      {user.email}
+                    </Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" gap={2}>
+                    <Typography variant="subtitle1" color="text.secondary" fontWeight={500} minWidth={120}>
+                      Position
+                    </Typography>
+                    <Typography variant="body1" fontWeight={600}>
+                      {user.position}
+                    </Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" gap={2}>
+                    <Typography variant="subtitle1" color="text.secondary" fontWeight={500} minWidth={120}>
+                      Joined Date
+                    </Typography>
+                    <Typography variant="body1" fontWeight={600}>
+                      {user.joinDate}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Box>
+            )}
+
+            {/* Skills Section */}
+            <Box mt={5}>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={2}
+              >
+                <Typography variant="h6" fontWeight={700}>
+                  Skills
+                </Typography>
+                <Button
+                  variant="contained"
+                  size="medium"
+                  sx={{
+                    background: "linear-gradient(135deg, #7c3aed, #a78bfa)",
+                    fontWeight: "bold",
+                    boxShadow: "0 2px 8px 0 rgba(124,58,237,0.12)",
+                  }}
+                  onClick={handleAddSkillClick}
+                >
+                  Add Skill
+                </Button>
+              </Box>
+
+              {loadingSkills || availableSkillsLoading ? (
+                <Box display="flex" justifyContent="center" py={2}>
+                  <CircularProgress />
+                </Box>
+              ) : assignedSkills.length === 0 ? (
+                <Typography color="text.secondary">
+                  No skills assigned yet.
+                </Typography>
+              ) : (
+                <Grid container spacing={3} mt={1}>
+                  {assignedSkills.map((assigned) => (
+                    <Grid item key={assigned.id} xs={12} sm={6} md={4}>
+                      <AssignedSkillCard
+                        assigned={assigned}
+                        onEdit={handleEditAssignedSkill}
+                        onDelete={handleDeleteAssignedSkill}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
+
+              <Box mt={4}>
+                <Typography
+                  variant="subtitle2"
+                  fontWeight={600}
+                  color="primary"
+                >
+                  Quick Assign Skills
+                </Typography>
+                <Stack direction="row" spacing={2} flexWrap="wrap" mt={2}>
+                  {availableSkills.map((s) => (
+                    <Button
+                      key={s.id}
+                      size="small"
+                      variant="outlined"
+                      sx={{
+                        borderRadius: 3,
+                        fontWeight: "bold",
+                        px: 2,
+                        py: 0.5,
+                      }}
+                      onClick={() => handleQuickAssign(s.id)}
+                    >
+                      {s.name}
+                    </Button>
+                  ))}
+                </Stack>
+              </Box>
+            </Box>
+          </Card>
+        </Grid>
+
+        <EmployeeSkillDialog
+          open={skillDialogOpen}
+          onClose={() => {
+            setSkillDialogOpen(false);
+            setSkillDialogInitial(null);
+            setPrefillSkillId(null);
+          }}
+          availableSkills={availableSkills}
+          initial={skillDialogInitial}
+          prefillSkillId={prefillSkillId}
+          onSave={handleSaveAssignedSkill}
+        />
       </Box>
     </EmployeeLayout>
   );
