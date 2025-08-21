@@ -544,7 +544,7 @@ const Profile = () => {
                       <Grid item xs={12} sm={6}>
                         <Field name="position">
                           {({ field, form }) => (
-                            <FormControl fullWidth>
+                            <FormControl style={{ width: "100px" }}>
                               <InputLabel id="position-select-label">
                                 Position
                               </InputLabel>
